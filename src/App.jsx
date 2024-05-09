@@ -1,34 +1,43 @@
-
-import React from 'react';
-import Cookies from 'js-cookie';
+import React, {useState} from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-
-import LoginRegister from './Components/LoginRegister';
-import Profile from './Components/Profile';
-import ErrorPage from './Components/ErrorPage';
-
-
+import Register from './Register/Register';
+import Login from './Login/Login';
+import Header from './Header/Header';
+import Home from './Home/Home';
+import RouterComponet from './utils/RouterComponet';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import AlertComponent from './Components/AlertComponent';
 function App() {
-
-  if(Cookies.get('authToken') !== '')
-  {
-    Cookies.set('authToken', Cookies.get('authToken'), { expires: 7, path: '/' })
-  }
-  else if(Cookies.get('authToken') === '' || Cookies.get('authToken') === undefined)
-  {
-    Cookies.set('authToken', '', { expires: 7, path: '/' })
-  }
-
+  const [title, updateTitle] = useState(null);
+  const [errorMessage, updateErrorMessage] = useState(null);
   return (
     <Router>
-      <div className="App">
-        <Route path="/" exact component={LoginRegister} />
-        <Route path="/profile" component={Profile} />
-        {/* <Route path="*" exact component={ErrorPage} />  */}
-      </div>
+    <div className="App">
+      <Header title={title}/>
+        <div className="container d-flex align-items-center flex-column">
+          <Switch>
+            <Route path="/" exact={true}>
+              <Register showError={updateErrorMessage} updateTitle={updateTitle}/>
+            </Route>
+            <Route path="/register">
+              <Register showError={updateErrorMessage} updateTitle={updateTitle}/>
+            </Route>
+            <Route path="/login">
+              <Login showError={updateErrorMessage} updateTitle={updateTitle}/>
+            </Route>
+            <RouterComponet path="/home">
+              <Home/>
+            </RouterComponet>
+          </Switch>
+          <AlertComponent errorMessage={errorMessage} hideError={updateErrorMessage}/>
+        </div>
+    </div>
     </Router>
   );
 }
 
-export default App;
+export default App
